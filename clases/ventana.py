@@ -1,6 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
-from herramientas import coloresAplicacion
+
+Color_Cabecera = "#bfbfbf"
+Color_Pie = "#bfbfbf"
+Color_Principal = "#e2e2e2"
+Color_Izquierda = "#d0d0d0"
 
 class Ventana(tk.Tk):
     def __init__(self, ancho, alto, titulo, posx, posy):
@@ -12,11 +16,10 @@ class Ventana(tk.Tk):
         self.posy = posy
 
         self.title(self.titulo)
-        cA = coloresAplicacion()
-        self.Color_principal = cA.get_Color_Principal()
-        self.Color_pie = cA.get_Color_Pie()
-        self.Color_izquierda = cA.get_Color_Izquierda()
-        self.Color_cabecera = cA.get_Color_Cabecera()
+        self.Color_principal = Color_Principal
+        self.Color_pie = Color_Pie
+        self.Color_izquierda = Color_Izquierda
+        self.Color_cabecera = Color_Cabecera
         self.geometry(f"{self.ancho}x{self.alto}+{self.posx}+{self.posy}")
         self.resizable(True, True)
         self.cajas()
@@ -55,7 +58,7 @@ class Ventana(tk.Tk):
 
     def newLabel(self, texto, where, aligment, size):
         self.label = tk.Label(where, text = texto, bg = where.cget("bg"), font = ("Elephant", size))
-        self.label.pack(padx = 0, pady = 10, anchor = aligment, expand = True)
+        self.label.pack(padx = 0, pady = 0, anchor = aligment, expand = True)
         return self.label
     
     def newImage(self, ruta, where):
@@ -87,10 +90,11 @@ class Ventana(tk.Tk):
             self.principal.winfo_children()[1].destroy(),
             self.buttonGrafica.configure(text = "Mostrar Gráfica", command = self.grafica)
         })
+    """
     
     def botonGrafica(self, where):
-        self.buttonGrafica = ttk.Button(where, text = "Mostrar Gráfica", command = self.grafica)
-        self.buttonGrafica.pack(padx = 10, pady = 3, expand = True) """
+        self.buttonGrafica = ttk.Button(where, text = "Gráfica Stock")
+        self.buttonGrafica.pack(padx = 10, pady = 3, expand = True) 
     
     """ def enviarEmail(self):
         from correo import Correo
@@ -125,10 +129,15 @@ class Ventana(tk.Tk):
             Correo().enviarEmail(),
         })
         redactar.pack(padx = 10, pady = 10)
-    
+    """
+
     def botonEmail(self, where):
-        self.buttonEmail = ttk.Button(where, text = "Enviar Email", command = self.enviarEmail)
-        self.buttonEmail.pack(padx = 10, pady = 3, expand = True) """
+        self.buttonEmail = ttk.Button(where, text = "Informe productos")
+        self.buttonEmail.pack(padx = 10, pady = 3, expand = True)
+
+    def botonProducto(self, where):
+        self.buttonProducto = ttk.Button(where, text = "Añadir producto")
+        self.buttonProducto.pack(padx = 10, pady = 3, expand = True)
     
     
     

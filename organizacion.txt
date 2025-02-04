@@ -1,0 +1,9 @@
+Modo cliente:
+    - Botón de hacer compra (ventana hija)
+    - Boton de obtener informacion de producto(email)
+    - Gráfica ?
+
+Modo empresa:
+    - Botón para 'ver ventas y' stock (Grafica)
+    - Informes de productos 'ventas' (email)
+    - Botón que abre ventana hija para introducir productos
