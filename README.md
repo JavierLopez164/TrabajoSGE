@@ -35,13 +35,18 @@ Esto traerá los cambios de la rama main a tu rama de trabajo. Si hay conflictos
 
 # Ideas
 El proyecto se basa en hacer gestiones de productos en un almacen y ver las ventas que se han realizado.
-Una base de datos local, cada uno en su equipo, en la que tenemos el "stock" de cada producto y el precio de cada uno.
+Una base de datos local, cada uno en su equipo, en la que tenemos la tabla producto y la tabal venta.
 De cada producto tenemos: 
 - Nombre
 - Precio
 - Stock
 - Nº articulo
 - Descripcion
+
+De cada venta:
+- Nº articulo
+- Cantidad
+- Nombre cliente
 
 La gráfica estaría relaccionada con las ventas de los productos y el stock que queda de ellos.
 
