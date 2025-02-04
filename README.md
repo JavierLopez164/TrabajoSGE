@@ -32,3 +32,17 @@ Fusionar main en tu rama de trabajo:
     git merge main
 
 Esto traerá los cambios de la rama main a tu rama de trabajo. Si hay conflictos, Git te notificará y tendrás que resolverlos antes de completar la fusión.
+
+# Ideas
+El proyecto se basa en hacer gestiones de productos en un almacen y ver las ventas que se han realizado.
+Una base de datos local, cada uno en su equipo, en la que tenemos el "stock" de cada producto y el precio de cada uno.
+De cada producto tenemos: 
+- Nombre
+- Precio
+- Stock
+- Nº articulo
+- Descripcion
+
+La gráfica estaría relaccionada con las ventas de los productos y el stock que queda de ellos.
+
+El correo podría ser de que el usuario pone el nombre o nº articulo y le envia por correo toda la información de dicho producto.
