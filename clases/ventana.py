@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 import mysql.connector
 
 Color_Cabecera = "#bfbfbf"
@@ -141,44 +142,37 @@ class Ventana(tk.Tk):
         self.buttonEmail.pack(padx = 10, pady = 3, expand = True)
 
     def aniadirProducto(self):
-        for widget in self.principal.winfo_children():
-            widget.destroy()
-        
-        self.principal.grid_columnconfigure(0, weight=1)
-        self.principal.grid_columnconfigure(1, weight=1)
-        self.principal.grid_rowconfigure(0, weight=1)
-        self.principal.grid_rowconfigure(1, weight=1)
-        self.principal.grid_rowconfigure(2, weight=1)
-        self.principal.grid_rowconfigure(3, weight=1)
-        self.principal.grid_rowconfigure(4, weight=1)
-        self.principal.grid_rowconfigure(5, weight=1)
         producto = self.principal
+
+        for i in range(6):
+            producto.grid_rowconfigure(i, weight=1)
+        producto.grid_columnconfigure(0, weight=1)
+        producto.grid_columnconfigure(1, weight=1)
 
         def guardarProducto():
 
-            conn = mysql.connector.connect(user = "root", password = "1234", host = "localhost")
-            print(conn)
-
-            if conn.is_connected():
-                cursor = conn.cursor()
-                cursor.execute("CREATE DATABASE IF NOT EXISTS almacen")
-                cursor.execute("USE almacen")
-                cursor.execute("CREATE TABLE IF NOT EXISTS productos (nArticulo INT PRIMARY KEY, nombre VARCHAR(50), precio FLOAT, stock INT, descripcion VARCHAR(100));")
-                cursor.execute(f"INSERT INTO productos (nArticulo, nombre, precio, stock, descripcion) VALUES ({entryNArticulo.get()}, '{entryNombre.get()}', {entryPrecio.get()}, {entryStock.get()}, '{entryDescripcion.get()}');")
-                conn.commit()
-                print("Inserción de datos exitosa")
-                cursor.close()
+            if entryNArticulo.get() == "" or entryNombre.get() == "" or entryPrecio.get() == "" or entryStock.get() == "" or entryDescripcion.get() == "":
+                messagebox.showerror("Error", "Por favor, rellene todos los campos")
             else:
-                print("Error al insertar el producto a la base de datos")
+                conn = mysql.connector.connect(user = "root", password = "1234", host = "localhost")
+                print(conn)
 
-            conn.close()
+                if conn.is_connected():
+                    cursor = conn.cursor()
+                    cursor.execute("CREATE DATABASE IF NOT EXISTS almacen")
+                    cursor.execute("USE almacen")
+                    cursor.execute("CREATE TABLE IF NOT EXISTS productos (nArticulo INT PRIMARY KEY, nombre VARCHAR(50), precio FLOAT, stock INT, descripcion VARCHAR(100));")
+                    cursor.execute(f"SELECT COUNT(*) FROM productos WHERE nArticulo = {entryNArticulo.get()}")
+                    
+                    if cursor.fetchone()[0] > 0:
+                        messagebox.showerror("Error", "El número de artículo ya existe en la base de datos")
+                    else:
+                        cursor.execute(f"INSERT INTO productos (nArticulo, nombre, precio, stock, descripcion) VALUES ({entryNArticulo.get()}, '{entryNombre.get()}', {entryPrecio.get()}, {entryStock.get()}, '{entryDescripcion.get()}');")
+                        conn.commit()
+                        messagebox.showinfo("Éxito", "Producto añadido correctamente")
+                    cursor.close()
 
-        """ventanaHija = tk.Toplevel(self)
-        ventanaHija.title("Añadir producto")
-        self.pos_x = (self.anchoPantalla // 2) - (350 // 2)
-        self.pos_y = (self.altoPantalla // 2) - (350 // 2)
-        ventanaHija.geometry(f"350x350+{self.pos_x}+{self.pos_y}")
-        ventanaHija.resizable(False, False)"""
+                conn.close()
 
         lblNArticulo = tk.Label(producto, text = "Número de artículo: ", bg = producto.cget("bg"))
         lblNArticulo.grid(row = 0, column = 0, padx = 0, pady = 10)
@@ -232,6 +226,10 @@ class Ventana(tk.Tk):
     def botonProducto(self, where):
         self.buttonProducto = ttk.Button(where, text = "Añadir producto", command = self.aniadirProducto)
         self.buttonProducto.pack(padx = 10, pady = 3, expand = True)
+
+    def botonCerrar(self, where):
+        self.buttonCerrar = ttk.Button(where, text = "Cerrar programa", command = self.destroy)
+        self.buttonCerrar.pack(padx = 10, pady = 3, expand = True)
     
     
     
