@@ -21,7 +21,11 @@ class Ventana(tk.Tk):
         self.Color_pie = Color_Pie
         self.Color_izquierda = Color_Izquierda
         self.Color_cabecera = Color_Cabecera
-        self.geometry(f"{self.ancho}x{self.alto}+{self.posx}+{self.posy}")
+        self.anchoPantalla = self.winfo_screenwidth()
+        self.altoPantalla = self.winfo_screenheight()
+        self.pos_x = (self.anchoPantalla // 2) - (self.ancho // 2)
+        self.pos_y = (self.altoPantalla // 2) - (self.alto // 2)
+        self.geometry(f"{self.ancho}x{self.alto}+{self.pos_x}+{self.pos_y}")
         self.resizable(True, True)
         self.cajas()
     
@@ -159,7 +163,9 @@ class Ventana(tk.Tk):
 
         ventanaHija = tk.Toplevel(self)
         ventanaHija.title("Añadir producto")
-        ventanaHija.geometry("300x300")
+        self.pos_x = (self.anchoPantalla // 2) - (300 // 2)
+        self.pos_y = (self.altoPantalla // 2) - (300 // 2)
+        ventanaHija.geometry(f"300x300+{self.pos_x}+{self.pos_y}")
         ventanaHija.resizable(False, False)
 
         lblNArticulo = tk.Label(ventanaHija, text = "Número de artículo: ")
