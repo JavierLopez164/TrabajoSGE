@@ -148,7 +148,7 @@ class Ventana(tk.Tk):
                 cursor.execute("CREATE DATABASE IF NOT EXISTS almacen")
                 cursor.execute("USE almacen")
                 cursor.execute("CREATE TABLE IF NOT EXISTS productos (nArticulo INT PRIMARY KEY, nombre VARCHAR(50), precio FLOAT, stock INT, descripcion VARCHAR(100));")
-                cursor.execute(f"INSERT INTO productos (nArticulo, nombre, precio, stock, descripcion) VALUES ({nArticulo.get()}, '{nombre.get()}', {precio.get()}, {stock.get()}, '{descripcion.get()}');")
+                cursor.execute(f"INSERT INTO productos (nArticulo, nombre, precio, stock, descripcion) VALUES ({entryNArticulo.get()}, '{entryNombre.get()}', {entryPrecio.get()}, {entryStock.get()}, '{entryDescripcion.get()}');")
                 conn.commit()
                 print("Inserción de datos exitosa")
                 cursor.close()
@@ -165,36 +165,31 @@ class Ventana(tk.Tk):
         lblNArticulo = tk.Label(ventanaHija, text = "Número de artículo: ")
         lblNArticulo.grid(row = 0, column = 0, padx = 10, pady = 10)
 
-        nArticulo = tk.StringVar()
-        entryNArticulo = ttk.Entry(ventanaHija, textvariable = nArticulo)
+        entryNArticulo = ttk.Entry(ventanaHija)
         entryNArticulo.grid(row = 0, column = 1, padx = 10, pady = 10)
 
         lblNombre = tk.Label(ventanaHija, text = "Nombre: ")
         lblNombre.grid(row = 1, column = 0, padx = 10, pady = 10)
 
-        nombre = tk.StringVar()
-        entryNombre = ttk.Entry(ventanaHija, textvariable = nombre)
+        entryNombre = ttk.Entry(ventanaHija)
         entryNombre.grid(row = 1, column = 1, padx = 10, pady = 10)
 
         lblPrecio = tk.Label(ventanaHija, text = "Precio: ")
         lblPrecio.grid(row = 2, column = 0, padx = 10, pady = 10)
 
-        precio = tk.StringVar()
-        entryPrecio = ttk.Entry(ventanaHija, textvariable = precio)
+        entryPrecio = ttk.Entry(ventanaHija)
         entryPrecio.grid(row = 2, column = 1, padx = 10, pady = 10)
 
         lblStock = tk.Label(ventanaHija, text = "Stock: ")
         lblStock.grid(row = 3, column = 0, padx = 10, pady = 10)
 
-        stock = tk.StringVar()
-        entryStock = ttk.Entry(ventanaHija, textvariable = stock)
+        entryStock = ttk.Entry(ventanaHija)
         entryStock.grid(row = 3, column = 1, padx = 10, pady = 10)
 
         lblDescripcion = tk.Label(ventanaHija, text = "Descripción: ")
         lblDescripcion.grid(row = 4, column = 0, padx = 10, pady = 10)
 
-        descripcion = tk.StringVar()
-        entryDescripcion = ttk.Entry(ventanaHija, textvariable = descripcion)
+        entryDescripcion = ttk.Entry(ventanaHija)
         entryDescripcion.grid(row = 4, column = 1, padx = 10, pady = 10)
 
         btnGuardar = ttk.Button(ventanaHija, text = "Guardar", command = guardarProducto)
