@@ -62,6 +62,10 @@ class Ventana(tk.Tk):
         self.principal.pack(expand = True, fill = "both")
         self.principal.propagate(False)
 
+    def clearFrame(self):
+        for widget in self.principal.winfo_children():
+            widget.destroy()
+
     def newLabel(self, texto, where, aligment, size):
         self.label = tk.Label(where, text = texto, bg = where.cget("bg"), font = ("Elephant", size))
         self.label.pack(padx = 0, pady = 0, anchor = aligment, expand = True)
@@ -74,32 +78,45 @@ class Ventana(tk.Tk):
         self.label.pack(padx = 3, pady = 3)
         return self.label
     
-    """ def grafica(self):
+    def grafica(self):
         import matplotlib.pyplot as plt # type: ignore
         from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg # type: ignore
 
+        self.clearFrame()
+
+        conn = mysql.connector.connect(user = "root", password = "1234", host = "localhost")
+        print(conn)
+        if conn.is_connected():
+            cursor = conn.cursor()
+            cursor.execute("USE almacen")
+            cursor.execute("SELECT stock FROM productos;")
+            datosStock = cursor.fetchall()
+            cursor.execute("SELECT nombre FROM productos;")
+            datosNombre = cursor.fetchall()
+            cursor.close()
+        conn.close()
+
         fig, ax = plt.subplots()
 
-        x = [1, 2, 3, 4, 5]
-        y = [10, 20, 25, 35, 45]
+        y = [stock[0] for stock in datosStock]
+        x = [nombre[0] for nombre in datosNombre] 
 
         ax.plot(x, y)
-        ax.set_title("Gráfica")
-        ax.set_xlabel("Eje X")
-        ax.set_ylabel("Eje Y")
+        ax.set_title("Stock del almacén")
+        ax.set_xlabel("Nombre del producto")
+        ax.set_ylabel("Stock del producto") 
 
         canvas = FigureCanvasTkAgg(fig, master=self.principal)
         canvas.draw()
         canvas.get_tk_widget().pack()
 
         self.buttonGrafica.configure(text="Ocultar Gráfica", command=lambda:{
-            self.principal.winfo_children()[1].destroy(),
+            self.clearFrame(),
             self.buttonGrafica.configure(text = "Mostrar Gráfica", command = self.grafica)
         })
-    """
     
     def botonGrafica(self, where):
-        self.buttonGrafica = ttk.Button(where, text = "Gráfica Stock")
+        self.buttonGrafica = ttk.Button(where, text = "Gráfica Stock", command=self.grafica)
         self.buttonGrafica.pack(padx = 10, pady = 3, expand = True) 
     
     """ def enviarEmail(self):
@@ -142,6 +159,8 @@ class Ventana(tk.Tk):
         self.buttonEmail.pack(padx = 10, pady = 3, expand = True)
 
     def aniadirProducto(self):
+        self.clearFrame()
+
         producto = self.principal
 
         for i in range(6):
@@ -170,6 +189,11 @@ class Ventana(tk.Tk):
                         cursor.execute(f"INSERT INTO productos (nArticulo, nombre, precio, stock, descripcion) VALUES ({entryNArticulo.get()}, '{entryNombre.get()}', {entryPrecio.get()}, {entryStock.get()}, '{entryDescripcion.get()}');")
                         conn.commit()
                         messagebox.showinfo("Éxito", "Producto añadido correctamente")
+                        entryNArticulo.delete(0, tk.END)
+                        entryNombre.delete(0, tk.END)
+                        entryPrecio.delete(0, tk.END)
+                        entryStock.delete(0, tk.END)
+                        entryDescripcion.delete(0, tk.END)
                     cursor.close()
 
                 conn.close()
@@ -230,6 +254,5 @@ class Ventana(tk.Tk):
     def botonCerrar(self, where):
         self.buttonCerrar = ttk.Button(where, text = "Cerrar programa", command = self.destroy)
         self.buttonCerrar.pack(padx = 10, pady = 3, expand = True)
-    
     
     
