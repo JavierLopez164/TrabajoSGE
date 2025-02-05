@@ -10,6 +10,7 @@ ventana.newLabel("Menú: ", ventana.izquierda, "center", 15)
 ventana.botonGrafica(ventana.izquierda)
 ventana.botonEmail(ventana.izquierda)
 ventana.botonProducto(ventana.izquierda)
+ventana.botonCerrar(ventana.izquierda)
 
 ventana.newLabel("© Raúl García\n © Javier López", ventana.pie, "w", 10)
 
