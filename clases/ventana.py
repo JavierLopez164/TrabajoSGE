@@ -141,8 +141,20 @@ class Ventana(tk.Tk):
         self.buttonEmail.pack(padx = 10, pady = 3, expand = True)
 
     def aniadirProducto(self):
+        for widget in self.principal.winfo_children():
+            widget.destroy()
+        
+        self.principal.grid_columnconfigure(0, weight=1)
+        self.principal.grid_columnconfigure(1, weight=1)
+        self.principal.grid_rowconfigure(0, weight=1)
+        self.principal.grid_rowconfigure(1, weight=1)
+        self.principal.grid_rowconfigure(2, weight=1)
+        self.principal.grid_rowconfigure(3, weight=1)
+        self.principal.grid_rowconfigure(4, weight=1)
+        self.principal.grid_rowconfigure(5, weight=1)
+        producto = self.principal
+
         def guardarProducto():
-            global nArticulo, nombre, precio, stock, descripcion
 
             conn = mysql.connector.connect(user = "root", password = "1234", host = "localhost")
             print(conn)
@@ -161,45 +173,61 @@ class Ventana(tk.Tk):
 
             conn.close()
 
-        ventanaHija = tk.Toplevel(self)
+        """ventanaHija = tk.Toplevel(self)
         ventanaHija.title("Añadir producto")
-        self.pos_x = (self.anchoPantalla // 2) - (300 // 2)
-        self.pos_y = (self.altoPantalla // 2) - (300 // 2)
-        ventanaHija.geometry(f"300x300+{self.pos_x}+{self.pos_y}")
-        ventanaHija.resizable(False, False)
+        self.pos_x = (self.anchoPantalla // 2) - (350 // 2)
+        self.pos_y = (self.altoPantalla // 2) - (350 // 2)
+        ventanaHija.geometry(f"350x350+{self.pos_x}+{self.pos_y}")
+        ventanaHija.resizable(False, False)"""
 
-        lblNArticulo = tk.Label(ventanaHija, text = "Número de artículo: ")
-        lblNArticulo.grid(row = 0, column = 0, padx = 10, pady = 10)
+        lblNArticulo = tk.Label(producto, text = "Número de artículo: ", bg = producto.cget("bg"))
+        lblNArticulo.grid(row = 0, column = 0, padx = 0, pady = 10)
 
-        entryNArticulo = ttk.Entry(ventanaHija)
-        entryNArticulo.grid(row = 0, column = 1, padx = 10, pady = 10)
+        entryNArticulo = ttk.Entry(producto)
+        entryNArticulo.grid(row = 0, column = 1, padx = 0, pady = 10)
 
-        lblNombre = tk.Label(ventanaHija, text = "Nombre: ")
+        lblNombre = tk.Label(producto, text = "Nombre: ", bg = producto.cget("bg"))
         lblNombre.grid(row = 1, column = 0, padx = 10, pady = 10)
 
-        entryNombre = ttk.Entry(ventanaHija)
+        entryNombre = ttk.Entry(producto)
         entryNombre.grid(row = 1, column = 1, padx = 10, pady = 10)
 
-        lblPrecio = tk.Label(ventanaHija, text = "Precio: ")
+        lblPrecio = tk.Label(producto, text = "Precio: ", bg = producto.cget("bg"))
         lblPrecio.grid(row = 2, column = 0, padx = 10, pady = 10)
 
-        entryPrecio = ttk.Entry(ventanaHija)
+        entryPrecio = ttk.Entry(producto)
         entryPrecio.grid(row = 2, column = 1, padx = 10, pady = 10)
 
-        lblStock = tk.Label(ventanaHija, text = "Stock: ")
+        lblStock = tk.Label(producto, text = "Stock: ", bg = producto.cget("bg"))
         lblStock.grid(row = 3, column = 0, padx = 10, pady = 10)
 
-        entryStock = ttk.Entry(ventanaHija)
+        entryStock = ttk.Entry(producto)
         entryStock.grid(row = 3, column = 1, padx = 10, pady = 10)
 
-        lblDescripcion = tk.Label(ventanaHija, text = "Descripción: ")
+        lblDescripcion = tk.Label(producto, text = "Descripción: ", bg = producto.cget("bg"))
         lblDescripcion.grid(row = 4, column = 0, padx = 10, pady = 10)
 
-        entryDescripcion = ttk.Entry(ventanaHija)
+        entryDescripcion = ttk.Entry(producto)
         entryDescripcion.grid(row = 4, column = 1, padx = 10, pady = 10)
 
-        btnGuardar = ttk.Button(ventanaHija, text = "Guardar", command = guardarProducto)
-        btnGuardar.grid(row = 5, column = 0, columnspan = 2, padx = 10, pady = 10)
+        btnGuardar = ttk.Button(producto, text = "Guardar", command = guardarProducto)
+        btnGuardar.grid(row = 5, column = 0, padx = 10, pady = 10)
+
+        btnCerrar = ttk.Button(producto, text = "Cerrar", command = lambda:{
+            lblNArticulo.destroy(),
+            entryNArticulo.destroy(),
+            lblNombre.destroy(),
+            entryNombre.destroy(),
+            lblPrecio.destroy(),
+            entryPrecio.destroy(),
+            lblStock.destroy(),
+            entryStock.destroy(),
+            lblDescripcion.destroy(),
+            entryDescripcion.destroy(),
+            btnGuardar.destroy(),
+            btnCerrar.destroy()
+        })
+        btnCerrar.grid(row = 5, column = 1, padx = 10, pady = 10)
 
     def botonProducto(self, where):
         self.buttonProducto = ttk.Button(where, text = "Añadir producto", command = self.aniadirProducto)
