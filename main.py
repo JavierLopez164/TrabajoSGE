@@ -14,6 +14,4 @@ ventana.botonCerrar(ventana.izquierda)
 
 ventana.newLabel("© Raúl García\n © Javier López", ventana.pie, "w", 10)
 
-
-
 ventana.mainloop()

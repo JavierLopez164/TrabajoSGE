@@ -12,8 +12,7 @@ class Correo():
 
     def enviarEmail(self):
         email = EmailMessage()
-        origen = f"{self.usuario}@educa.madrid.org"
-        email["From"] = origen
+        email["From"] = f"{self.usuario}@educa.madrid.org"
         email["To"] = f"{self.destino}@educa.madrid.org"
         email["Subject"] = self.asunto
         email.set_content(self.cuerpo)
