@@ -1,11 +1,11 @@
 import jinja2
 import pdfkit
 
-class pdf():
+class PDF():
     def __init__(self, inf):
         self.inf = inf
 
-    def crearPDF(self, ruta_template, ruta_css):
+    def crearPDF(self, ruta_template, ruta_css, ruta_salida):
         nombre_template = ruta_template.split('/')[-1]
         ruta_template = ruta_template.replace(nombre_template, '')
 
@@ -23,15 +23,5 @@ class pdf():
         }
 
         config = pdfkit.configuration(wkhtmltopdf = '/usr/bin/wkhtmltopdf')
-        ruta_salida = '/mnt/d/2DAM/SGE/python/clases/file.pdf'
 
         pdfkit.from_string(html, ruta_salida, css=ruta_css, options=options, configuration=config)
-
-info = {"nombre": "Raúl", "apellidos": "García López"}
-
-crear = pdf(info)
-
-ruta_template = '/mnt/d/2DAM/SGE/python/ficherosPDF/plantilla.html'
-ruta_css = '/mnt/d/2DAM/SGE/python/ficherosPDF/estilos.css'
-
-crear.crearPDF(ruta_template, ruta_css)
