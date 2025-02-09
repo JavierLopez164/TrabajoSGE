@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 import mysql.connector
+from PyPDF2 import PdfMerger
 
 Color_Cabecera = "#bfbfbf"
 Color_Pie = "#bfbfbf"
@@ -118,44 +119,84 @@ class Ventana(tk.Tk):
     def botonGrafica(self, where):
         self.buttonGrafica = ttk.Button(where, text = "Gráfica Stock", command=self.grafica)
         self.buttonGrafica.pack(padx = 10, pady = 3, expand = True) 
-    
-    """ def enviarEmail(self):
-        from correo import Correo
+
+    def generarPDF(self):
+        from .pdf import PDF
+        from datetime import datetime
+
+        self.clearFrame()
+
+        conn = mysql.connector.connect(user = "root", password = "1234", host = "localhost")
+
+        if conn.is_connected():
+            cursor = conn.cursor()
+            cursor.execute("USE almacen")
+            cursor.execute("SELECT * FROM productos;")
+            productos = cursor.fetchall()
+            cursor.close()
+        conn.close()
+
+        pdf_files = []
+        for row in productos:
+            info = {
+                "nArticulo": row[0],
+                "nombre": row[1],
+                "precio": row[2],
+                "stock": row[3],
+                "descripcion": row[4],
+                "fecha": datetime.now().strftime("%d/%m/%Y")
+            }
+
+            ruta_template = "./modelos/plantilla.html"
+            ruta_css = "./estilos/estilos.css"
+            ruta_salida = f'/mnt/c/Users/Raul/Desktop/TrabajoSGE/informes/Articulo{row[0]}.pdf'
+            PDF(info).crearPDF(ruta_template, ruta_css, ruta_salida)
+            pdf_files.append(ruta_salida)
+
+        # Fusionar todos los archivos PDF en uno solo
+        merger = PdfMerger()
+        for pdf in pdf_files:
+            merger.append(pdf)
+        merger.write('/mnt/c/Users/Raul/Desktop/TrabajoSGE/informes/Informe_Productos.pdf')
+        merger.close()
+        
+
+    def enviarEmail(self):
+        from .correo import Correo
         email = self.principal
+        asunto = "Informe de productos"
+        cuerpo = "Adjunto encontrará el informe de productos generado."
 
         usuariolbl = tk.Label(email, text = "Usuario: ", bg = self.principal.cget("bg"))
-        usuariolbl.pack(padx = 10, pady = 10)
+        usuariolbl.grid(row = 0, column = 0, padx = 0, pady = 10)
         usuarioet = ttk.Entry(email)
-        usuarioet.pack(padx = 10, pady = 10)
+        usuarioet.grid(row = 0, column = 1, padx = 0, pady = 10)
 
         contrasenalbl = tk.Label(email, text = "Contraseña: ", bg = self.principal.cget("bg"))
-        contrasenalbl.pack(padx = 10, pady = 10)
+        contrasenalbl.grid(row = 1, column = 0, padx = 10, pady = 10)
         contrasenaet = ttk.Entry(email, show = "*")
-        contrasenaet.pack(padx = 10, pady = 10)
+        contrasenaet.grid(row = 1, column = 1, padx = 10, pady = 10)
 
         destinolbl = tk.Label(email, text = "Destino: ", bg = self.principal.cget("bg"))
-        destinolbl.pack(padx = 10, pady = 10)
+        destinolbl.grid(row = 2, column = 0, padx = 10, pady = 10)
         destinoet = ttk.Entry(email)
-        destinoet.pack(padx = 10, pady = 10)
+        destinoet.grid(row = 2, column = 1, padx = 10, pady = 10)
 
-        asuntolbl = tk.Label(email, text = "Asunto: ", bg = self.principal.cget("bg"))
-        asuntolbl.pack(padx = 10, pady = 10)
-        asuntoet = ttk.Entry(email)
-        asuntoet.pack(padx = 10, pady = 10)
-
-        cuerpolbl = tk.Label(email, text = "Cuerpo: ", bg = self.principal.cget("bg"))
-        cuerpolbl.pack(padx = 10, pady = 10)
-        cuerpoet = tk.Entry(email)
-        cuerpoet.pack(padx = 10, pady = 10)
-
-        redactar = ttk.Button(self.principal, text = "Enviar", command = lambda:{
-            Correo().enviarEmail(),
+        redactar = ttk.Button(self.principal, text = "Enviar", command = lambda: {
+            self.generarPDF(),
+            Correo().enviarEmail(
+                usuarioet.get(), 
+                contrasenaet.get(), 
+                destinoet.get(), 
+                asunto, 
+                cuerpo, 
+                adjunto='/mnt/c/Users/Raul/Desktop/TrabajoSGE/informes/Informe_Productos.pdf'
+            )
         })
-        redactar.pack(padx = 10, pady = 10)
-    """
+        redactar.grid(row = 3, column = 0, columnspan = 2, padx = 10, pady = 10)
 
     def botonEmail(self, where):
-        self.buttonEmail = ttk.Button(where, text = "Informe productos")
+        self.buttonEmail = ttk.Button(where, text = "Informe productos", command=self.enviarEmail)
         self.buttonEmail.pack(padx = 10, pady = 3, expand = True)
 
     def aniadirProducto(self):
@@ -254,5 +295,4 @@ class Ventana(tk.Tk):
     def botonCerrar(self, where):
         self.buttonCerrar = ttk.Button(where, text = "Cerrar programa", command = self.destroy)
         self.buttonCerrar.pack(padx = 10, pady = 3, expand = True)
-    
-    
+
