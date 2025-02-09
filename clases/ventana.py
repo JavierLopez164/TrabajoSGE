@@ -184,14 +184,14 @@ class Ventana(tk.Tk):
 
         redactar = ttk.Button(self.principal, text = "Enviar", command = lambda: {
             self.generarPDF(),
-            Correo().enviarEmail(
-                usuarioet.get(), 
-                contrasenaet.get(), 
-                destinoet.get(), 
+            Correo(
+                usuarioet, 
+                contrasenaet, 
+                destinoet, 
                 asunto, 
                 cuerpo, 
-                adjunto='/mnt/c/Users/Raul/Desktop/TrabajoSGE/informes/Informe_Productos.pdf'
-            )
+                adjunto='./informes/Informe_Productos.pdf'
+            ).enviarEmail()
         })
         redactar.grid(row = 3, column = 0, columnspan = 2, padx = 10, pady = 10)
 
@@ -273,18 +273,7 @@ class Ventana(tk.Tk):
         btnGuardar.grid(row = 5, column = 0, padx = 10, pady = 10)
 
         btnCerrar = ttk.Button(producto, text = "Cerrar", command = lambda:{
-            lblNArticulo.destroy(),
-            entryNArticulo.destroy(),
-            lblNombre.destroy(),
-            entryNombre.destroy(),
-            lblPrecio.destroy(),
-            entryPrecio.destroy(),
-            lblStock.destroy(),
-            entryStock.destroy(),
-            lblDescripcion.destroy(),
-            entryDescripcion.destroy(),
-            btnGuardar.destroy(),
-            btnCerrar.destroy()
+            self.clearFrame()
         })
         btnCerrar.grid(row = 5, column = 1, padx = 10, pady = 10)
 

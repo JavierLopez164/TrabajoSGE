@@ -1,7 +1,7 @@
 import smtplib
 from email.message import EmailMessage
 from email.mime.base import MIMEBase
-from email import encoders
+import os
 
 class Correo():
 
@@ -20,11 +20,10 @@ class Correo():
         email["Subject"] = self.asunto
         email.set_content(self.cuerpo)
 
-        if self.adjunto:
-            with open(self.adjunto, "rb") as f:
-                file_data = f.read()
-                file_name = f.name
-                email.add_attachment(file_data, maintype="application", subtype="octet-stream", filename=file_name)
+        with open(self.adjunto, 'rb') as archivo:
+            data = archivo.read()
+            name = os.path.basename(self.adjunto)
+            email.add_attachment(data, maintype = "file", subtype = "pdf", filename = name)
 
         with smtplib.SMTP("smtp01.educa.madrid.org", 587) as server:
             server.ehlo()
