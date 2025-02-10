@@ -124,6 +124,45 @@ class Ventana(tk.Tk):
         self.buttonGrafica = ttk.Button(where, text = "Gráfica Stock", command=self.grafica)
         self.buttonGrafica.pack(padx = 10, pady = 3, expand = True) 
 
+    def generarPDF(self):
+        from .pdf import PDF
+        from datetime import datetime
+
+        self.clearFrame()
+
+        conn = mysql.connector.connect(user = "root", password = "1234", host = "localhost")
+
+        if conn.is_connected():
+            cursor = conn.cursor()
+            cursor.execute("USE almacen")
+            cursor.execute("SELECT * FROM productos;")
+            productos = cursor.fetchall()
+            cursor.close()
+        conn.close()
+
+        pdf_files = []
+        for row in productos:
+            info = {
+                "nArticulo": row[0],
+                "nombre": row[1],
+                "precio": row[2],
+                "stock": row[3],
+                "descripcion": row[4],
+                "fecha": datetime.now().strftime("%d/%m/%Y")
+            }
+
+            ruta_template = "./modelos/plantilla.html"
+            ruta_css = "./estilos/estilos.css"
+            ruta_salida = f'/mnt/c/Users/Raul/Desktop/TrabajoSGE/informes/Articulo{row[0]}.pdf'
+            PDF(info).crearPDF(ruta_template, ruta_css, ruta_salida)
+            pdf_files.append(ruta_salida)
+
+        # Juntar los pdfs generados
+        merger = PdfMerger()
+        for pdf in pdf_files:
+            merger.append(pdf)
+        merger.write('/mnt/c/Users/Raul/Desktop/TrabajoSGE/informes/Informe_Productos.pdf')
+        merger.close()
 
     # ENVÍO DE PDF POR CORREO
     def enviarEmail(self):
@@ -143,65 +182,30 @@ class Ventana(tk.Tk):
 
         usuariolbl = tk.Label(email, text = "Usuario: ", bg = self.principal.cget("bg"))
         usuariolbl.grid(row = 0, column = 0, padx = 0, pady = 10)
-        usuarioet = ttk.Entry(email)
+        usuarioString = tk.StringVar()
+        usuarioet = ttk.Entry(email, textvariable=usuarioString)
         usuarioet.grid(row = 0, column = 1, padx = 0, pady = 10)
 
         contrasenalbl = tk.Label(email, text = "Contraseña: ", bg = self.principal.cget("bg"))
         contrasenalbl.grid(row = 1, column = 0, padx = 10, pady = 10)
-        contrasenaet = ttk.Entry(email, show = "*")
+        contrasenaString = tk.StringVar()
+        contrasenaet = ttk.Entry(email, textvariable=contrasenaString, show = "*")
         contrasenaet.grid(row = 1, column = 1, padx = 10, pady = 10)
 
         destinolbl = tk.Label(email, text = "Destino: ", bg = self.principal.cget("bg"))
         destinolbl.grid(row = 2, column = 0, padx = 10, pady = 10)
-        destinoet = ttk.Entry(email)
+        destinoString = tk.StringVar()
+        destinoet = ttk.Entry(email, textvariable=destinoString)
         destinoet.grid(row = 2, column = 1, padx = 10, pady = 10)
 
-        def generarPDF():
-            from .pdf import PDF
-            from datetime import datetime
-
-            self.clearFrame()
-
-            conn = mysql.connector.connect(user = "root", password = "1234", host = "localhost")
-
-            if conn.is_connected():
-                cursor = conn.cursor()
-                cursor.execute("USE almacen")
-                cursor.execute("SELECT * FROM productos;")
-                productos = cursor.fetchall()
-                cursor.close()
-            conn.close()
-
-            pdf_files = []
-            for row in productos:
-                info = {
-                    "nArticulo": row[0],
-                    "nombre": row[1],
-                    "precio": row[2],
-                    "stock": row[3],
-                    "descripcion": row[4],
-                    "fecha": datetime.now().strftime("%d/%m/%Y")
-                }
-
-                ruta_template = "./modelos/plantilla.html"
-                ruta_css = "./estilos/estilos.css"
-                ruta_salida = f'/mnt/c/Users/Raul/Desktop/TrabajoSGE/informes/Articulo{row[0]}.pdf'
-                PDF(info).crearPDF(ruta_template, ruta_css, ruta_salida)
-                pdf_files.append(ruta_salida)
-
-            # Juntar los pdfs generados
-            merger = PdfMerger()
-            for pdf in pdf_files:
-                merger.append(pdf)
-            merger.write('/mnt/c/Users/Raul/Desktop/TrabajoSGE/informes/Informe_Productos.pdf')
-            merger.close()
+        
 
         redactar = ttk.Button(self.principal, text = "Enviar", command = lambda: {
-            generarPDF(),
+            self.generarPDF(),
             Correo(
-                usuarioet, 
-                contrasenaet.get(), 
-                destinoet.get(), 
+                usuarioString.get(), 
+                contrasenaString.get(), 
+                destinoString.get(), 
                 asunto, 
                 cuerpo, 
                 adjunto='./informes/Informe_Productos.pdf'
