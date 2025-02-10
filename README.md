@@ -53,4 +53,4 @@ La gráfica estaría relaccionada con las ventas de los productos y el stock que
 El correo podría ser de que el usuario pone el nombre o nº articulo y le envia por correo toda la información de dicho producto.
 
 # Paleta de colores
-[text](https://paletadecolores.com.mx/paleta/9c9c9c/adadad/bfbfbf/d0d0d0/e2e2e2/)
+[text](https://paletadecolores.com.mx/paleta/2973b5/458bc8/62a3da/7ebaed/9ad2ff/)

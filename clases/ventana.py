@@ -4,10 +4,10 @@ from tkinter import messagebox
 import mysql.connector
 from PyPDF2 import PdfMerger
 
-Color_Cabecera = "#bfbfbf"
+Color_Cabecera = "#62a3da"
 Color_Pie = "#bfbfbf"
-Color_Principal = "#e2e2e2"
-Color_Izquierda = "#d0d0d0"
+Color_Principal = "#9ad2ff"
+Color_Izquierda = "#7ebaed"
 
 class Ventana(tk.Tk):
     def __init__(self, ancho, alto, titulo, posx, posy):
@@ -124,6 +124,7 @@ class Ventana(tk.Tk):
         self.buttonGrafica = ttk.Button(where, text = "Gráfica Stock", command=self.grafica)
         self.buttonGrafica.pack(padx = 10, pady = 3, expand = True) 
 
+    # CREACION DE PDFS
     def generarPDF(self):
         from .pdf import PDF
         from datetime import datetime
@@ -183,7 +184,7 @@ class Ventana(tk.Tk):
         usuariolbl = tk.Label(email, text = "Usuario: ", bg = self.principal.cget("bg"))
         usuariolbl.grid(row = 0, column = 0, padx = 0, pady = 10)
         usuarioString = tk.StringVar()
-        usuarioet = ttk.Entry(email, textvariable=usuarioString)
+        usuarioet = ttk.Entry(email, textvariable=usuarioString, cursor="xterm")
         usuarioet.grid(row = 0, column = 1, padx = 0, pady = 10)
 
         contrasenalbl = tk.Label(email, text = "Contraseña: ", bg = self.principal.cget("bg"))
