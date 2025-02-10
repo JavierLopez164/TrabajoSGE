@@ -63,6 +63,8 @@ class Ventana(tk.Tk):
         self.principal.pack(expand = True, fill = "both")
         self.principal.propagate(False)
 
+
+    # CONFIGURACION DE WIDGETS
     def clearFrame(self):
         for widget in self.principal.winfo_children():
             widget.destroy()
@@ -79,6 +81,8 @@ class Ventana(tk.Tk):
         self.label.pack(padx = 3, pady = 3)
         return self.label
     
+
+    # CREACIÓN DE GRÁFICA
     def grafica(self):
         import matplotlib.pyplot as plt # type: ignore
         from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg # type: ignore
@@ -120,52 +124,22 @@ class Ventana(tk.Tk):
         self.buttonGrafica = ttk.Button(where, text = "Gráfica Stock", command=self.grafica)
         self.buttonGrafica.pack(padx = 10, pady = 3, expand = True) 
 
-    def generarPDF(self):
-        from .pdf import PDF
-        from datetime import datetime
+
+    # ENVÍO DE PDF POR CORREO
+    def enviarEmail(self):
+        from .correo import Correo
 
         self.clearFrame()
 
-        conn = mysql.connector.connect(user = "root", password = "1234", host = "localhost")
-
-        if conn.is_connected():
-            cursor = conn.cursor()
-            cursor.execute("USE almacen")
-            cursor.execute("SELECT * FROM productos;")
-            productos = cursor.fetchall()
-            cursor.close()
-        conn.close()
-
-        pdf_files = []
-        for row in productos:
-            info = {
-                "nArticulo": row[0],
-                "nombre": row[1],
-                "precio": row[2],
-                "stock": row[3],
-                "descripcion": row[4],
-                "fecha": datetime.now().strftime("%d/%m/%Y")
-            }
-
-            ruta_template = "./modelos/plantilla.html"
-            ruta_css = "./estilos/estilos.css"
-            ruta_salida = f'/mnt/c/Users/Raul/Desktop/TrabajoSGE/informes/Articulo{row[0]}.pdf'
-            PDF(info).crearPDF(ruta_template, ruta_css, ruta_salida)
-            pdf_files.append(ruta_salida)
-
-        # Fusionar todos los archivos PDF en uno solo
-        merger = PdfMerger()
-        for pdf in pdf_files:
-            merger.append(pdf)
-        merger.write('/mnt/c/Users/Raul/Desktop/TrabajoSGE/informes/Informe_Productos.pdf')
-        merger.close()
-        
-
-    def enviarEmail(self):
-        from .correo import Correo
         email = self.principal
         asunto = "Informe de productos"
         cuerpo = "Adjunto encontrará el informe de productos generado."
+
+        # Configurar el grid (añadimos 4 filas pero ponemos 4 más para que visualmente esté mejor)
+        for i in range(8):
+            email.grid_rowconfigure(i, weight=1)
+        email.grid_columnconfigure(0, weight=1)
+        email.grid_columnconfigure(1, weight=1)
 
         usuariolbl = tk.Label(email, text = "Usuario: ", bg = self.principal.cget("bg"))
         usuariolbl.grid(row = 0, column = 0, padx = 0, pady = 10)
@@ -182,12 +156,52 @@ class Ventana(tk.Tk):
         destinoet = ttk.Entry(email)
         destinoet.grid(row = 2, column = 1, padx = 10, pady = 10)
 
+        def generarPDF():
+            from .pdf import PDF
+            from datetime import datetime
+
+            self.clearFrame()
+
+            conn = mysql.connector.connect(user = "root", password = "1234", host = "localhost")
+
+            if conn.is_connected():
+                cursor = conn.cursor()
+                cursor.execute("USE almacen")
+                cursor.execute("SELECT * FROM productos;")
+                productos = cursor.fetchall()
+                cursor.close()
+            conn.close()
+
+            pdf_files = []
+            for row in productos:
+                info = {
+                    "nArticulo": row[0],
+                    "nombre": row[1],
+                    "precio": row[2],
+                    "stock": row[3],
+                    "descripcion": row[4],
+                    "fecha": datetime.now().strftime("%d/%m/%Y")
+                }
+
+                ruta_template = "./modelos/plantilla.html"
+                ruta_css = "./estilos/estilos.css"
+                ruta_salida = f'/mnt/c/Users/Raul/Desktop/TrabajoSGE/informes/Articulo{row[0]}.pdf'
+                PDF(info).crearPDF(ruta_template, ruta_css, ruta_salida)
+                pdf_files.append(ruta_salida)
+
+            # Juntar los pdfs generados
+            merger = PdfMerger()
+            for pdf in pdf_files:
+                merger.append(pdf)
+            merger.write('/mnt/c/Users/Raul/Desktop/TrabajoSGE/informes/Informe_Productos.pdf')
+            merger.close()
+
         redactar = ttk.Button(self.principal, text = "Enviar", command = lambda: {
-            self.generarPDF(),
+            generarPDF(),
             Correo(
                 usuarioet, 
-                contrasenaet, 
-                destinoet, 
+                contrasenaet.get(), 
+                destinoet.get(), 
                 asunto, 
                 cuerpo, 
                 adjunto='./informes/Informe_Productos.pdf'
@@ -199,12 +213,15 @@ class Ventana(tk.Tk):
         self.buttonEmail = ttk.Button(where, text = "Informe productos", command=self.enviarEmail)
         self.buttonEmail.pack(padx = 10, pady = 3, expand = True)
 
+
+    # AÑADIR PRODUCTO A LA BASE DE DATOS
     def aniadirProducto(self):
         self.clearFrame()
 
         producto = self.principal
 
-        for i in range(6):
+        # Configurar el grid (añadimos 8 filas pero ponemos 2 más para que visualmente esté mejor)
+        for i in range(10):
             producto.grid_rowconfigure(i, weight=1)
         producto.grid_columnconfigure(0, weight=1)
         producto.grid_columnconfigure(1, weight=1)
@@ -281,6 +298,8 @@ class Ventana(tk.Tk):
         self.buttonProducto = ttk.Button(where, text = "Añadir producto", command = self.aniadirProducto)
         self.buttonProducto.pack(padx = 10, pady = 3, expand = True)
 
+
+    # CERRAR PROGRAMA
     def botonCerrar(self, where):
         self.buttonCerrar = ttk.Button(where, text = "Cerrar programa", command = self.destroy)
         self.buttonCerrar.pack(padx = 10, pady = 3, expand = True)
