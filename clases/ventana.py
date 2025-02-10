@@ -153,7 +153,7 @@ class Ventana(tk.Tk):
 
             ruta_template = "./modelos/plantilla.html"
             ruta_css = "./estilos/estilos.css"
-            ruta_salida = f'/mnt/c/Users/Raul/Desktop/TrabajoSGE/informes/Articulo{row[0]}.pdf'
+            ruta_salida = f'./informes/Articulo{row[0]}.pdf'
             PDF(info).crearPDF(ruta_template, ruta_css, ruta_salida)
             pdf_files.append(ruta_salida)
 
@@ -161,7 +161,7 @@ class Ventana(tk.Tk):
         merger = PdfMerger()
         for pdf in pdf_files:
             merger.append(pdf)
-        merger.write('/mnt/c/Users/Raul/Desktop/TrabajoSGE/informes/Informe_Productos.pdf')
+        merger.write('./informes/Informe_Productos.pdf')
         merger.close()
 
     # ENVÍO DE PDF POR CORREO
